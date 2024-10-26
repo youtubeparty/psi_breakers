@@ -2,19 +2,17 @@ var symmetry;
 
 var angle;
 
-let x = 700;
-let y = 500;
-
 let currentX = 10;
 let currentY = 10;
-let currentXSize = x;
-let currentYSize = y;
+var currentXSize;
+var currentYSize;
+var x;
+var y;
 
-
-let xVelocity = 4;
-let yVelocity = 2;
-let xSizeVelocity = 5;
-let ySizeVelocity = 7;
+var xVelocity;
+var yVelocity;
+var xSizeVelocity;
+var ySizeVelocity;
 
 var secretNumber;
 var secretImage;
@@ -30,6 +28,17 @@ var score;
 
 var name;
 
+function realX(relativeX) {
+  return (relativeX * x)/2
+}
+
+function realY(relativeY) {
+  return (relativeY * y)/2
+}
+
+function realTextSize(sizeRelativeTo720) {
+  return (sizeRelativeTo720/720)*x
+}
 
 function preload(){
   selectSecret();
@@ -37,6 +46,16 @@ function preload(){
 }
 
 function setup() {
+  x = windowWidth;
+  y = windowHeight;
+  currentXSize = x;
+  currentYSize = y;
+  
+  xVelocity = 4 * x / 400;
+  yVelocity = 2 * y / 720;
+  xSizeVelocity = 5 * x /400;
+  ySizeVelocity = 7 * y / 720;
+  
   createCanvas(x, y);
   angleMode(DEGREES);
   blendMode(DIFFERENCE);
@@ -88,7 +107,10 @@ function draw() {
 }
 
 function selectSecret(){
-  secretNumber = int(random(10));
+  lastSecret = secretNumber;
+  while(lastSecret == secretNumber){
+    secretNumber = int(random(10)); 
+  }
   secretImage = loadImage('test'+(secretNumber)+'.png');
   if(secretNumber == 0 || secretNumber == 1){
     symmetry = 2;
@@ -107,6 +129,8 @@ function writeText(words,size,xText,yText,font){
   textFont(font);
   textSize(size);
   fill('black');
+  stroke(246, 255, 224);
+  strokeWeight(10);
   text(words,xText,yText);
   blendMode(DIFFERENCE);
   
@@ -145,27 +169,27 @@ function keyPressed(){
 
 function menu(){
   if(mode=='title'){
-    writeText('PSI BREAKERS',50,-5,0,'Courier New');
-    writeText('enter name to start',30,-10,50,'Courier New');
+    writeText('PSI BREAKERS',realTextSize(50),realX(-0.05),realY(0),'Courier New');
+    writeText('enter name to start',30,realX(-0.05),realY(0.2),busStop);
   }else if(mode=='game'){
-    writeText('a number has been generated bewteen 0 & 9(inclusive)',30,-x/3,0,'Courier New');
-    writeText(' bewteen 0 & 9(inclusive)',30,-x/3,25,'Courier New');
-     writeText('what is the number?',30,-100,75,'Courier New');
+    writeText('a number has been generated \nbetween 0 & 9(inclusive)',realTextSize(30),realX(-0.7),realY(0),'Courier New');
+    // writeText('between 0 & 9(inclusive)',30,-x/3,25,'Courier New');
+     writeText('what is the number?',realTextSize(30),realX(-0.28),realY(0.32),'Courier New');
   }else if(mode=='results'){
     if(userInput == secretNumber){
-      writeText('Correct Secret Number Is ' + secretNumber,40,-350,0,'Courier New');
+      writeText('Correct Secret Number Is ' + secretNumber,realTextSize(40),realX(-0.9),realY(0),'Courier New');
       
     }else{
-      writeText('Incorrect Secret Number Is ' + secretNumber,40,-350,0,'Courier New');
+      writeText('Incorrect Secret Number Is ' + secretNumber,realTextSize(40),realX(-0.9),realY(0),'Courier New');
     }
-    writeText('enter to continue',30,-10,50,'Courier New');
+    writeText('enter to continue',realTextSize(40),realX(-0.2),realY(0.2),'Courier New');
   }else if(mode == 'end'){
-    writeText(name+": "+score+int(random(10))+"% psychic pressure",40,-350,0,'Courier New');
-    writeText('enter to restart',30,-10,50,'Courier New');
+    writeText(name+": "+score+int(random(10))+"% psychic pressure",realTextSize(40),realX(-0.9),realY(0),'Courier New');
+    writeText('enter to restart',realTextSize(40),realX(-0.05),realY(0.2),'Courier New');
   }
   
   if(mode!='results' && mode !='end'){
-    writeText(userInput,40,-40,100,'Courier New');
+    writeText(userInput,realTextSize(40),realX(-0.1),realY(0.4),'Courier New');
   }
   
 }
